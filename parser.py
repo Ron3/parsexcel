@@ -18,13 +18,20 @@ class Parser(object):
     # EXCEL_FILEL_TYPE_LIST = ['xlsx', 'xlsm', 'xls']
     EXCEL_FILEL_TYPE_LIST = ['xlsx', 'xlsm']
 
-    def __init__(self, path):
+    def __init__(self, path, initSheet=set()):
+        """
+        解析指定的文件
+        :param path: 路径
+        :param initSheet: 只解析指定的 sheetName 的表
+        :return:
+        """
         self.path = path
 
         ''' excel 文件及其内容的实例 '''
         self.excel = {}
 
-
+        ''' 只需要初始化的表 '''
+        self.initSheet = initSheet
 
 
     def __getitem__(self, item):
@@ -109,6 +116,10 @@ class Parser(object):
         :return:
         """
         for ws in self.getAllWorksheet():
+            if ws.title not in self.initSheet:
+                ''' 不在解表的范围 '''
+                continue
+
             infoArray = []
             for r in ws.get_squared_range(1, 1, ws.max_column, ws.max_row):
                 infoArray.append([c.value for c in r])
